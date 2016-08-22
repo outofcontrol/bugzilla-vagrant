@@ -1,22 +1,21 @@
-# Bugzilla vagrant
+# Bugzilla Vagrant 
 
-A Vagrant setup to install Bugzilla on Ubuntu with Apache. To use this
-with vagrant installed, clone this repository and run `vagrant up`.
-
-The installation script could also be used on a non-vagrant system to
-simplify the installation of Bugzilla however the response file would require
-modification to use a real SMTP server and switching to a real database
-as this is configured to use Sqlite for development.
-
-If any patch files are included in the patches folder then these will be
-applied using `git am`.
-
-If any Bugzilla extensions are included as zip archives in the
-extensions folder then these are unpacked in the Bugzilla extensions
-folder on the server before 'checksetup.pl' is run.
+A VagrantFile to install Bugzilla on Ubuntu 16.04 with Apache and sqlite. 
 
 *Note* this installation uses SQLite as the database to simplify the
  installation. This should not be used for production installations.
+
+### How-To
+Clone this repository and run `vagrant up`
+
+### Patches Directory
+If any patch files are included in the patches folder then these will be
+applied using `git am`.
+
+### Extensions Directory
+If any Bugzilla extensions are included as zip archives in the
+extensions folder then these are unpacked in the Bugzilla extensions
+folder on the server before 'checksetup.pl' is run.
 
 Once the provisioning stage has completed the Bugzilla application
 will be running and just needs logging in as `admin@example.com` using
