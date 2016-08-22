@@ -9,14 +9,12 @@ then
 fi
 
 # Join the www-data and adm groups to facilitate debugging
+useradd vagrant
 adduser vagrant www-data # enable access to bugzilla files
 adduser vagrant adm      # enable review of apache logs
 
-# Install prerequisite packages (using sqlite3 for development only)
-apt-get install -y perl sqlite3 git build-essential unzip apache2 apache2-mpm-prefork
+apt-get install -y perl sqlite3 git build-essential unzip apache2
 
-# Install all perl packages from apt
-# Note: some may be behind the required version, see below.
 apt-get install -y libappconfig-perl libdate-calc-perl libtemplate-perl \
     libmime-perl libdatetime-timezone-perl libdatetime-perl libemail-sender-perl \
     libemail-mime-perl libemail-mime-modifier-perl libdbi-perl libdbd-sqlite3-perl \
@@ -36,7 +34,7 @@ git config --get user.email || git config --global user.email 'vagrant@example.c
 # Checkout bugzilla from the git repository
 if [ ! -d /opt/bugzilla ]
 then
-    git clone --branch master https://git.mozilla.org/bugzilla/bugzilla /opt/bugzilla
+    git clone --branch master https://github.com/bugzilla/bugzilla /opt/bugzilla
     cd /opt/bugzilla
 
     # Install any local extensions
@@ -53,6 +51,7 @@ then
 fi
 
 # Add a bugzilla configuration to Apache and enable necessary modules.
+systemctl enable apache2
 a2query -qm cgid || a2enmod cgid
 a2query -qm expires || a2enmod expires
 a2enmod -qm headers || a2enmod headers
@@ -66,11 +65,11 @@ Alias /Bugzilla /opt/bugzilla/
   Options +ExecCGI +FollowSymLinks
   SetEnv no-gzip 1
   DirectoryIndex index.cgi index.html
-  AllowOverride Limit FileInfo Indexes Options
+  AllowOverride Limit FileInfo Indexes AuthConfig Options
   Require all granted
 </Directory>
 EOF
-    a2enconf -q bugzilla && service apache2 reload
+    a2enconf -q bugzilla && systemctl restart apache2
 fi
 
 # Create a response file to avoid user input in bugzilla configuration
